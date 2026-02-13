@@ -1,0 +1,32 @@
+{
+  "name": "jsdi",
+  "version": "1.0.0",
+  "description": "A lightweight, Proxy-based dependency injection system for ESM.",
+  "license": "ISC",
+  "author": "ikealmighty",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "node --test ./test/**/*.test.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ikealmighty/jsdi.git"
+  },
+  "keywords": [
+    "dependency-injection",
+    "di",
+    "proxy",
+    "esm",
+    "node"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
