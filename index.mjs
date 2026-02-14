@@ -1,12 +1,21 @@
 import fs from "fs";
 import path from "path";
 
+const CONSTR_TOKEN = Symbol("DependencyInjector Constructor");
+
 export class DependencyInjector {
-  constructor(dir) {
+  constructor(token) {
+    if (token !== CONSTR_TOKEN)
+      throw new Error(
+        "Call await DependencyInstructor.init() to create the DI",
+      );
     this.trackedFunctions = {};
-    if (dir) {
-      this.mapDependencies(dir);
-    }
+  }
+
+  static async init(dir) {
+    const di = new DependencyInjector(CONSTR_TOKEN);
+    await di.mapDependencies(dir);
+    return di;
   }
 
   async mapDependencies(dir) {

@@ -8,16 +8,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 test("maps dependencies from directory", async () => {
-  const injector = new DependencyInjector();
-  await injector.mapDependencies(path.join(__dirname, "./mock-dependencies"));
+  const injector = await DependencyInjector.init(
+    path.join(__dirname, "./mock-dependencies"),
+  );
   const dependencies = injector.trackedFunctions;
 
   assert.ok(dependencies["MockService"], "MockService should be tracked.");
 });
 
 test("injects dependencies into function", async () => {
-  const injector = new DependencyInjector();
-  await injector.mapDependencies(path.join(__dirname, "./mock-dependencies"));
+  const injector = await DependencyInjector.init(
+    path.join(__dirname, "./mock-dependencies"),
+  );
 
   function testFunction() {
     const { MockService } = testFunction.dependencies;
@@ -41,8 +43,7 @@ test("injects dependencies into function", async () => {
 });
 
 test("throws error for cicular dependencies", async () => {
-  const injector = new DependencyInjector();
-  await injector.mapDependencies(
+  const injector = await DependencyInjector.init(
     path.join(__dirname, "./circular-dependencies"),
   );
 
@@ -59,8 +60,9 @@ test("throws error for cicular dependencies", async () => {
 });
 
 test("'this' keyword works correctly in injected objects", async () => {
-  const injector = new DependencyInjector();
-  await injector.mapDependencies(path.join(__dirname, "./mock-dependencies"));
+  const injector = await DependencyInjector.init(
+    path.join(__dirname, "./mock-dependencies"),
+  );
 
   function TestObject() {
     const { MockObject } = this.dependencies;

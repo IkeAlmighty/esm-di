@@ -19,7 +19,7 @@ Include `DependencyInjector.mjs` in your project and point it to your source fil
 import { DependencyInjector } from "./index.mjs";
 
 // Initialize and auto-map a directory
-const di = new DependencyInjector("./path/to/dependency/directory");
+const di = await DependencyInjector.init("./path/to/dependency/directory");
 ```
 
 ---
