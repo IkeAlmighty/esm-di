@@ -16,7 +16,7 @@ A lightweight, **Proxy-based** dependency injection system for ESM. JS-DI allows
 Include `DependencyInjector.mjs` in your project and point it to your source files.
 
 ```javascript
-import { DependencyInjector } from "./index.mjs";
+import { DependencyInjector } from "esm-di";
 
 // Initialize and auto-map a directory
 const di = await DependencyInjector.init("./path/to/dependency/directory");
