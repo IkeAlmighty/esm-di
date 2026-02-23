@@ -1,6 +1,3 @@
-import fs from "fs";
-import path from "path";
-
 const CONSTR_TOKEN = Symbol("DependencyInjector Constructor");
 
 export class DependencyInjector {
@@ -12,33 +9,22 @@ export class DependencyInjector {
     this.trackedFunctions = {};
   }
 
-  static async init(dir) {
+  static async init(modules) {
     const di = new DependencyInjector(CONSTR_TOKEN);
-    await di.mapDependencies(dir);
+    await di.mapDependencies(modules);
     return di;
   }
 
-  async mapDependencies(dir) {
-    const files = fs.readdirSync(dir);
-    for (const file of files) {
-      if (file.endsWith(".mjs") || file.endsWith(".js")) {
-        const modulePath = path.join(dir, file);
-        try {
-          const module = await import(`file://${modulePath}`);
-          if (module.default) {
-            if (!module.default.name) {
-              console.warn(
-                `Warning: Default function in file ${file} does not have a 'name' property, and so will be skipped in dependencies.`,
-              );
-            } else {
-              this.trackedFunctions[module.default.name] = module.default;
-            }
-          }
-        } catch (error) {
-          console.error(`Error loading dependency from file ${file}:`, error);
+  async mapDependencies(modules) {
+    for (const module of modules) {
+      if (module.default) {
+        if (!module.default.name) {
+          console.warn(
+            `Warning: Default function in file ${file} does not have a 'name' property, and so will be skipped in dependencies.`,
+          );
+        } else {
+          this.trackedFunctions[module.default.name] = module.default;
         }
-      } else if (fs.lstatSync(path.join(dir, file)).isDirectory()) {
-        await this.mapDependencies(path.join(dir, file));
       }
     }
   }

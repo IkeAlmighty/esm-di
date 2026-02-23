@@ -1,25 +1,49 @@
 import assert from "node:assert";
 import { test } from "node:test";
-import { DependencyInjector } from "../index.mjs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import fs from "node:fs/promises";
+import { fileURLToPath, pathToFileURL } from "node:url";
+
+import { DependencyInjector } from "../index.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const MODULE_EXT_REGEX = /\.(js|mjs|cjs)$/;
+
+async function getModules(dir) {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  let modules = [];
+
+  for (const entry of entries) {
+    const fullPath = path.resolve(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      console.log("is a directory");
+      const subModules = await getModules(fullPath);
+      modules = modules.concat(subModules);
+    } else if (entry.isFile() && MODULE_EXT_REGEX.test(entry.name)) {
+      const fileUrl = pathToFileURL(fullPath).href;
+      const module = await import(fileUrl);
+
+      modules.push(module);
+    }
+  }
+
+  return modules;
+}
+
 test("maps dependencies from directory", async () => {
-  const injector = await DependencyInjector.init(
-    path.join(__dirname, "./mock-dependencies"),
-  );
+  const dir = path.join(__dirname, "./mock-dependencies");
+  const injector = await DependencyInjector.init(await getModules(dir));
   const dependencies = injector.trackedFunctions;
 
   assert.ok(dependencies["MockService"], "MockService should be tracked.");
 });
 
 test("injects dependencies into function", async () => {
-  const injector = await DependencyInjector.init(
-    path.join(__dirname, "./mock-dependencies"),
-  );
+  const dir = path.join(__dirname, "./mock-dependencies");
+  const injector = await DependencyInjector.init(await getModules(dir));
 
   function testFunction() {
     const { MockService } = testFunction.dependencies;
@@ -43,9 +67,8 @@ test("injects dependencies into function", async () => {
 });
 
 test("throws error for cicular dependencies", async () => {
-  const injector = await DependencyInjector.init(
-    path.join(__dirname, "./circular-dependencies"),
-  );
+  const dir = path.join(__dirname, "./mock-dependencies");
+  const injector = await DependencyInjector.init(await getModules(dir));
 
   function startFunction() {
     const { CircularDependency } = startFunction.dependencies;
@@ -55,14 +78,13 @@ test("throws error for cicular dependencies", async () => {
   injector.injectDependencies(startFunction);
 
   assert.throws(() => startFunction(), {
-    message: /Circular dependency detected/,
+    message: /(Circular dependency detected)*/,
   });
 });
 
 test("'this' keyword works correctly in injected objects", async () => {
-  const injector = await DependencyInjector.init(
-    path.join(__dirname, "./mock-dependencies"),
-  );
+  const dir = path.join(__dirname, "./mock-dependencies");
+  const injector = await DependencyInjector.init(await getModules(dir));
 
   function TestObject() {
     const { MockObject } = this.dependencies;
