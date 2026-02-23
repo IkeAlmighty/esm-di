@@ -18,8 +18,9 @@ Include `DependencyInjector.mjs` in your project and point it to your source fil
 ```javascript
 import { DependencyInjector } from "esm-di";
 
-// Initialize and auto-map a directory
-const di = await DependencyInjector.init("./path/to/dependency/directory");
+// Initialize
+const modules = ... // your logic for loading modules
+const di = await DependencyInjector.init(modules);
 ```
 
 ---
