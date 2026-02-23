@@ -1,6 +1,6 @@
 {
   "name": "esm-di",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A lightweight, Proxy-based dependency injection system for ESM.",
   "license": "ISC",
   "author": "ikealmighty",
