@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 
 const CONSTR_TOKEN = Symbol("DependencyInjector Constructor");
+const MODULE_EXT_REGEX = /\.(js|mjs|cjs)$/;
 
 export class DependencyInjector {
   constructor(token) {
@@ -71,7 +72,6 @@ export async function getModules(dir) {
     const fullPath = path.resolve(dir, entry.name);
 
     if (entry.isDirectory()) {
-      console.log("is a directory");
       const subModules = await getModules(fullPath);
       modules = modules.concat(subModules);
     } else if (entry.isFile() && MODULE_EXT_REGEX.test(entry.name)) {
