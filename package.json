@@ -1,6 +1,6 @@
 {
   "name": "esm-di",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A lightweight, Proxy-based dependency injection system for ESM.",
   "license": "ISC",
   "author": "ikealmighty",
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/IkeAlmighty/esm-di"
+    "url": "git+https://github.com/IkeAlmighty/esm-di.git"
   },
   "keywords": [
     "dependency-injection",

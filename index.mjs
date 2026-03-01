@@ -1,3 +1,7 @@
+import path from "node:path";
+import fs from "node:fs/promises";
+import { pathToFileURL } from "node:url";
+
 const CONSTR_TOKEN = Symbol("DependencyInjector Constructor");
 
 export class DependencyInjector {
@@ -57,4 +61,26 @@ export class DependencyInjector {
 
     return func.bind(func);
   }
+}
+
+export async function getModules(dir) {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  let modules = [];
+
+  for (const entry of entries) {
+    const fullPath = path.resolve(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      console.log("is a directory");
+      const subModules = await getModules(fullPath);
+      modules = modules.concat(subModules);
+    } else if (entry.isFile() && MODULE_EXT_REGEX.test(entry.name)) {
+      const fileUrl = pathToFileURL(fullPath).href;
+      const module = await import(fileUrl);
+
+      modules.push(module);
+    }
+  }
+
+  return modules;
 }
