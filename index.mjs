@@ -60,6 +60,13 @@ export class DependencyInjector {
     func.dependencies = proxy;
     if (func.prototype) func.prototype.dependencies = proxy;
 
+    const isClass = func.toString().startsWith("class");
+    if (isClass) {
+      const instance = new func();
+      instance.dependencies = proxy;
+      return instance;
+    }
+
     return func.bind(func);
   }
 }
