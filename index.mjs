@@ -58,7 +58,7 @@ export class DependencyInjector {
     });
 
     func.dependencies = proxy;
-    func.prototype.dependencies = proxy;
+    if (func.prototype) func.prototype.dependencies = proxy;
 
     return func.bind(func);
   }
