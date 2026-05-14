@@ -82,13 +82,13 @@ test("throws error for cicular dependencies", async () => {
   });
 });
 
-test("'this' keyword works correctly in injected objects", async () => {
+test("'this' keyword works correctly in injected classes", async () => {
   const dir = path.join(__dirname, "./mock-dependencies");
   const injector = await DependencyInjector.init(await getModules(dir));
 
   function TestObject() {
-    const { MockObject } = this.dependencies;
-    return new MockObject();
+    const { MockClass } = this.dependencies;
+    return new MockClass();
   }
 
   injector.injectDependencies(TestObject);

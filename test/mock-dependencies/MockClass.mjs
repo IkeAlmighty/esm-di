@@ -1,7 +1,5 @@
-export default class MockObject {
+export default class MockClass {
   constructor() {
-    this.name = "MockObject";
-
     const { MockService } = this.dependencies;
 
     MockService();
